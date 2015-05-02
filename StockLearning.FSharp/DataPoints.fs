@@ -2,6 +2,14 @@
 
 module DataPoints =
     open System
+    open System.Globalization
+
+    type PointMetrics = 
+        | Open
+        | High
+        | Low
+        | Close
+        | Volume
 
     type StockPoint = 
         {
@@ -29,7 +37,7 @@ module DataPoints =
                 let volString   = elements.[6]
 
                 try
-                    let parsedDT    = DateTime.Parse(dateString)
+                    let parsedDT    = DateTime.ParseExact(dateString, "yyyyMMdd", CultureInfo.InvariantCulture)
                     let parsedOpen  = Double.Parse(openString)
                     let parsedHigh  = Double.Parse(highString)
                     let parsedLow   = Double.Parse(lowString)
@@ -43,7 +51,17 @@ module DataPoints =
                 None
 
     type StockCurve = 
-        {Points : List<StockPoint>}
+        {Symbol : System.String; Points : List<StockPoint>}
 
-        static member FromStockPoints (inputPoints : List<StockPoint>)= 
-            {Points = inputPoints}
+        static member FromStockPoints (inputPoints : List<StockPoint>) = 
+            let pointSym = 
+                if(inputPoints.IsEmpty) then
+                    ""
+                else 
+                    inputPoints.Head.Symbol
+            {Symbol = pointSym; Points = inputPoints}
+
+    type StockLearningData = 
+        {
+            stockData : List<StockCurve>
+        }
