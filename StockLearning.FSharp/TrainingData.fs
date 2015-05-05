@@ -23,7 +23,6 @@ module TrainingData =
     let getFeatureData (dataIn : StockLearningData) (predictionPoint : StockPoint) =
         let currentPointBuilder = FeatureBuilders.CurrentPointMetricFeature dataIn predictionPoint
         let immediatelyPriorBuilder = FeatureBuilders.ImmediatelyPriorPointMetricFeature dataIn predictionPoint
-
         [
             currentPointBuilder(PointMetrics.Close); 
             currentPointBuilder(PointMetrics.High); 
@@ -60,9 +59,7 @@ module TrainingData =
     let extractModelInputArray (inputTrainingPoints:seq<ModelTrainingPoint>) =
         inputTrainingPoints
         |> Seq.map(fun point -> point.trainingFeatures)
-        |> Seq.toArray
 
     let extractModelLabelsArray (inputTrainingPoints:seq<ModelTrainingPoint>) =
         inputTrainingPoints
         |> Seq.map(fun point -> point.label)
-        |> Seq.toArray

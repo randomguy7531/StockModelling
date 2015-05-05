@@ -15,6 +15,7 @@ namespace StockModelsConsole
             Console.WriteLine("Starting initialzation process....");
 
             String dataLocation     = @"C:\Users\Stanley\Documents\Visual Studio 2013\Projects\StockLearning\Stock Data\";
+            String modelsLocation   = @"C:\Users\Stanley\Documents\Visual Studio 2013\Projects\StockLearning\Models\";
             String tickersFile      = dataLocation + "Tickers.txt";
 
             
@@ -37,35 +38,66 @@ namespace StockModelsConsole
             //compute the feature and label data for the training points
             Console.WriteLine("Computing feature and label data for training samples....");
             var featureLabelData    = TrainingData.buildModelTrainingData(trainingPoints, learningData);
-            double[][] features     = TrainingData.extractModelInputArray(featureLabelData);
-            double[][] labels       = TrainingData.extractModelLabelsArray(featureLabelData);
+            Console.Write("features.....");
+            var features     = TrainingData.extractModelInputArray(featureLabelData);
+            Console.Write("done\r\nlabels.....");
+            var labels       = TrainingData.extractModelLabelsArray(featureLabelData);
+            Console.Write("done\r\n");
 
             //build and intialize the neural net trainer
             Console.WriteLine("Creating and intializing neural net....");
             NNTrainer modelTrainer  = new NNTrainer();
-
             modelTrainer.setFeaturesAndLabels(features, labels);
-            modelTrainer.initNet(5, 1);
+            modelTrainer.initNet(5, 2, 1);
 
             int epoch = 0;
+            int epochLimit = 100;
             double prevError = 0.0;
+
             Console.WriteLine("Initialization complete! Starting model training at epoch " + epoch);
             bool continueRunning = true;
-            while(!Console.KeyAvailable && continueRunning)
-            {
-                double error = modelTrainer.runEpoch();
-                Console.WriteLine("epoch = " + epoch++ + "avg error = " + error);
 
-                if(epoch > 100 && (Math.Abs(error - prevError) / prevError) < .00001)
+            while (continueRunning)
+            {
+                while (!Console.KeyAvailable && continueRunning)
                 {
-                    continueRunning = false;
+                    double error = modelTrainer.runEpoch();
+                    Console.WriteLine("epoch = " + epoch++ + "avg error = " + error);
+
+                    if (epoch > epochLimit && (Math.Abs(error - prevError) / prevError) < .00001)
+                    {
+                        continueRunning = false;
+                    }
+
+                    prevError = error;
                 }
 
-                prevError = error;
+                String input = Console.ReadLine();
+
+                if (input != "q")
+                {
+                    continueRunning = true;
+                    int newParsedLimit = 0;
+
+                    bool parseSuccess = int.TryParse(input, out newParsedLimit);
+
+                    if(parseSuccess)
+                    {
+                        epochLimit += newParsedLimit;
+                        continueRunning = true;
+                    }
+                    else
+                    {
+                        epochLimit += epochLimit;
+                        continueRunning = true;
+                    }
+                }
             }
 
-            Console.Read();
-
+            String modelFileName = DateTime.Now.ToString("yyyyMMdd_hhmmss_") + Guid.NewGuid().ToString() + ".nn";
+            Console.WriteLine("Writing model to file....");
+            modelTrainer.writeModelToFile(modelsLocation + modelFileName);
+            
         }
     }
 }
