@@ -1,6 +1,6 @@
 ﻿namespace StockLearning.FSharp
 
-module TrainingData =
+module TrainingValidationData =
     open System
     open DataPoints
     open FeatureBuilders
@@ -15,7 +15,7 @@ module TrainingData =
         }
 
     //grabs all stock points within a time range to serve as training points
-    let getTrainingPoints (dataIn : StockLearningData) dtStart dtEnd = 
+    let getTrainingValidationPoints (dataIn : StockLearningData) dtStart dtEnd = 
         dataIn.stockData 
         |> Seq.collect(fun curve -> DataHelpers.getPointInDateRange curve dtStart dtEnd)
 

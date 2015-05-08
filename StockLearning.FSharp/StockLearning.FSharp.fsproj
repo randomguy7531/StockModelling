@@ -45,7 +45,7 @@
     <Compile Include="DataPoints.fs" />
     <Compile Include="DataHelpers.fs" />
     <Compile Include="FeatureBuilders.fs" />
-    <Compile Include="TrainingData.fs" />
+    <Compile Include="TrainingValidationData.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
